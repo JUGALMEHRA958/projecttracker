@@ -13,24 +13,24 @@ const habitTrackerSchema = new mongoose.Schema({
       type: String,
       required: true
     },
+    status: {
+      type: String,
+      enum: ['Done', 'Not done', 'None'],
+      required: false,
+      default:"None",
+    },
     isDeleted: {
       type: Boolean,
       default: false
-    },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now
     }
+  },{
+    
+    timestamps
+    :true
   });
   
   const HabitTracker = mongoose.model('HabitTracker', habitTrackerSchema);
   
   module.exports = {
-    User,
     HabitTracker
   };

@@ -2,16 +2,26 @@ const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config();
 const habitsRouter = require('./modules/habits/routes'); // Import the habits router
-
+const path = require('path');
 const app = express();
+const {HabitTracker} = require("./modules/habits/schema")
+
+
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 // Middleware
 app.use(express.json());
 app.use( "/habits" , habitsRouter)
 
+
 // Routes
-app.get('/api', function (req, res, next) {
-  res.send('hello world');
+app.get('/', async function (req, res, next) {
+  let habitData = await HabitTracker.find({isDeleted:false}).sort({createdAt : -1})
+  res.render('index', {
+    habits :habitData
+  });
 });
 
 // MongoDB Connection

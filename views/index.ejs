@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Habit Tracker</title>
+    <style>
+      .habit-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      function updateStatus(event , id , status){
+            let updatedStatus = status.value;
+            
+            let dataToUpdate = {
+                id,updatedStatus
+            }
+            axios
+          .post("/habits/edit", dataToUpdate)
+          .then((response) => {
+            
+            // console.log(response);
+            window.alert(response.data.message);
+            window.location.reload();
+           
+        })
+          .catch((error) => {
+            // Handle any errors that occur during the request
+            console.error(error,"here");
+          });
+        }
+      function addHabit(e) {
+        e.preventDefault();
+        // console.log(e);
+        let title = document.getElementById("title").value;
+        let description = document.getElementById("description").value;
+
+        const habitData = {
+          title,
+          description,
+        };
+        axios
+          .post("/habits/add", habitData)
+          .then((response) => {
+            
+            console.log(response);
+           
+        })
+          .catch((error) => {
+            // Handle any errors that occur during the request
+            console.error(error,"here");
+          });
+          window.location.reload();
+
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Habit Tracker</h1>
+
+    <h2>Add a New Habit</h2>
+    <div class="habit-box">
+      <form action="/habits" method="post">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required />
+
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description" required />
+
+        <input value="Add Habit" onclick="addHabit(event)" />
+      </form>
+    </div>
+
+    <h2>Current Habits</h2>
+    <% if (habits.length === 0) { %>
+    <p>No habits added yet.</p>
+    <% } else { %> <% habits.forEach(function(habit) { %>
+    <div class="habit-box">
+      <h3>Title:-<%= habit.title %></h3>
+      <p>Description:<%= habit.description %></p>
+      <p>Status: <%= habit.status %></p>
+      <select id="habitSelector">
+        <option value="Done">Done</option>
+        <option value="Not done"> Not done</option>
+
+      </select>
+      <button onclick="updateStatus(event, `<%= habit._id  %>`   , document.getElementById('habitSelector'))">Update status</button>
+    </div>
+    <% }); %> <% } %>
+  </body>
+</html>
