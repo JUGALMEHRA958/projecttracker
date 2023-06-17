@@ -1,22 +1,23 @@
 const express = require('express');
 const router = express.Router();
 
-const {addIt,getBugs} = require("./controller");
+const {addIt,addBug} = require("./controller");
 const { Bug } = require('./schema');
 
 
 router.post('/add', addIt);
+router.post('/addBug', addBug);
 
 
-// router.post('/getBugPage', getBugs);
-    
+   
+router.get(`/bugsPage/:id`, async function (req, res, next) {
+  // console.log(req.body.data.bugs,"req.body.data.bugs")
+  // console.log("receive in param", req.params.id);
+  let bugs=await Bug.find({projectId:req.params.id})
+  res.render('bugspage', {bugs:bugs});
+});
 
-router.get("/bugspage/:id", async (req, res) => {
-    console.log("router page 14");
-    console.log(req.params.id,"this id receive");
-    let bugs= await Bug.find({projectId : req.params.id})
-    res.render("bugspage", { bugs });
-  });
+
   
 
 

@@ -10,7 +10,8 @@ const {Project} = require("./modules/projects/schema")
 
 
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, 'public'));
+app.use(express.static('public'));
 
 // Middleware
 app.use(express.json());
@@ -19,12 +20,14 @@ app.use( "/projects" , projectRouter)
 
 // Routes
 app.get('/', async function (req, res, next) {
-  let habitData = await Project.find({isDeleted:false}).sort({createdAt : -1});
-  console.log(habitData,"habit data");
+  let projectData = await Project.find({isDeleted:false}).sort({createdAt : -1});
+  console.log(projectData,"habit data");
   res.render('index', {
-    habits :habitData
+    habits :projectData
   });
 });
+
+
 
 // MongoDB Connection
 const uri = process.env.dbUrl;

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bugs</title>
+    <link rel="stylesheet" type="text/css" href="/css/bugs.css" />
+  </head>
+  <!-- Add this script tag in your HTML file -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <body>
+    <h1>Bugs</h1>
+
+    <!-- Filters -->
+    <script>
+      // Function to filter bugs based on search value
+      function searchBugs() {
+        var searchValue = document.getElementById("search").value.toLowerCase();
+
+        var tableRows = document.querySelectorAll("#mainTable tbody tr");
+
+        tableRows.forEach(function (row) {
+          var title = row.querySelector("td:nth-child(1)").innerText.toLowerCase();
+          var description = row.querySelector("td:nth-child(2)").innerText.toLowerCase();
+
+          if (title.includes(searchValue) || description.includes(searchValue)) {
+            row.style.display = "table-row";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      }
+
+      // Function to reset search
+      function resetSearch() {
+        document.getElementById("search").value = "";
+        var tableRows = document.querySelectorAll("#mainTable tbody tr");
+        tableRows.forEach(function (row) {
+          row.style.display = "table-row";
+        });
+      }
+
+      // Function to handle bug submission
+      function onBugSubmit() {
+        var currentURL = window.location.pathname;
+        var paramValue = currentURL.substring(currentURL.lastIndexOf("/") + 1);
+        let obj = {
+          title: document.getElementById("titleofbug").value,
+          description: document.getElementById("descriptionofbug").value,
+          label: document.getElementById("labelofbug").value,
+          author: document.getElementById("authorofbug").value,
+          projectId: paramValue,
+        };
+        console.log(obj, "obj");
+        axios.post("/projects/addBug", obj).then((response) => {
+          window.location.reload();
+        });
+      }
+
+      // Function to open modal
+      function openModal() {
+        console.log("in");
+        document.getElementById("createIssueModal").style.display = "block";
+        document.getElementById("mainTable").style.display = "none";
+      }
+
+      // Function to close modal
+      function closeModal() {
+        document.getElementById("createIssueModal").style.display = "none";
+        document.getElementById("mainTable").style.display = "block";
+      }
+    </script>
+
+    <!-- Modal -->
+    <div id="createIssueModal" class="modal" style="display: none">
+      <div class="modal-content">
+        <button class="close-modal" onclick="closeModal()">CLOSE</button>
+        <!-- <span class="close-modal" onclick="closeModal()">Close&times;</span> -->
+        <h2>Create New Issue</h2>
+        <!-- Add your form elements for creating a new issue -->
+        <label for="title">Title:</label>
+        <input type="text" id="titleofbug" name="title" />
+
+        <br />
+
+        <label for="description">Description:</label>
+        <textarea name="description" id="descriptionofbug"></textarea>
+
+        <br />
+
+        <label for="label">Label:</label>
+        <input type="text" id="labelofbug" name="label" />
+
+        <br />
+
+        <label for="author">Author:</label>
+        <input type="text" id="authorofbug" name="author" /><br />
+        <button onclick="onBugSubmit()">SUBMIT</button>
+      </div>
+    </div>
+    <div id="mainTable">
+      <!-- Search -->
+      <form onsubmit="event.preventDefault(); searchBugs();">
+        <label for="search">Search by Title or Description:</label>
+        <input type="text" id="search" name="search" />
+
+        <br />
+
+        <input type="submit" value="Search" />
+        <button type="button" onclick="resetSearch()">Reset</button>
+      </form>
+
+      <!-- Create Issue -->
+      <a href="#" onclick="openModal()">Create New Issue</a>
+      <br /><br />
+      <!-- Bugs Table -->
+      <table id="mainTable">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Label</th>
+            <th>Author</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% bugs.forEach(function(bug) { %>
+          <tr>
+            <td><%= bug.title %></td>
+            <td><%= bug.description %></td>
+            <td><%= bug.label %></td>
+            <td><%= bug.author %></td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>
