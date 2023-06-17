@@ -39,6 +39,23 @@
         });
       }
 
+      // Function to filter bugs based on label
+      function filterBugs() {
+        var selectedLabel = document.getElementById("labelFilter").value.toLowerCase();
+
+        var tableRows = document.querySelectorAll("#mainTable tbody tr");
+
+        tableRows.forEach(function (row) {
+          var label = row.querySelector("td:nth-child(3)").innerText.toLowerCase();
+
+          if (selectedLabel === "all" || label.includes(selectedLabel)) {
+            row.style.display = "table-row";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      }
+
       // Function to handle bug submission
       function onBugSubmit() {
         var currentURL = window.location.pathname;
@@ -108,6 +125,15 @@
         <input type="submit" value="Search" />
         <button type="button" onclick="resetSearch()">Reset</button>
       </form>
+
+      <!-- Filter -->
+      <label for="labelFilter">Filter by Label:</label>
+      <select id="labelFilter" onchange="filterBugs()">
+        <option value="all">All</option>
+        <% bugs.map(bug => bug.label).forEach(function(label) { %>
+        <option value="<%= label.toLowerCase() %>"><%= label %></option>
+        <% }) %>
+      </select>
 
       <!-- Create Issue -->
       <a href="#" onclick="openModal()">Create New Issue</a>
